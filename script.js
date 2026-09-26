@@ -57,7 +57,24 @@ document.addEventListener("DOMContentLoaded", () => {
   renderCart();
   renderWishlist();
   subscribeToProducts();
+  subscribeToBranding();
 });
+
+/* ---------- Live branding (logo + hero photo) from Firestore ---------- */
+function subscribeToBranding() {
+  db.collection("settings").doc("site").onSnapshot((doc) => {
+    if (!doc.exists) return;
+    const data = doc.data();
+    if (data.logoUrl) {
+      const logoImg = document.getElementById("brandLogoImg");
+      logoImg.src = data.logoUrl;
+      logoImg.style.display = "";
+    }
+    if (data.heroUrl) {
+      document.getElementById("heroImg").src = data.heroUrl;
+    }
+  });
+}
 
 /* ---------- Live product feed from Firestore ---------- */
 function subscribeToProducts() {
@@ -179,8 +196,11 @@ function renderProducts() {
     const media = card.querySelector(".product-media");
     if (media) media.addEventListener("click", (e) => {
       if (e.target.closest(".wish-toggle")) return;
-      openLightbox(p.id, 0);
+      openProductDetail(p.id);
     });
+
+    const nameEl = card.querySelector(".product-name");
+    if (nameEl) nameEl.addEventListener("click", () => openProductDetail(p.id));
 
     const wishBtn = card.querySelector(".wish-toggle");
     if (wishBtn) wishBtn.addEventListener("click", (e) => {
@@ -385,6 +405,114 @@ function lightboxStep(delta) {
   const len = p.images.length;
   lightboxState.index = (lightboxState.index + delta + len) % len;
   renderLightbox();
+}
+
+/* ---------- Product detail (Daraz-style quick view) ---------- */
+let detailState = { productId: null, index: 0, qty: 1 };
+
+function openProductDetail(productId) {
+  const p = findProduct(productId);
+  if (!p) return;
+  detailState = { productId, index: 0, qty: 1 };
+  renderProductDetail();
+  document.getElementById("productDetailModal").classList.add("active");
+  document.getElementById("productDetailModal").setAttribute("aria-hidden", "false");
+}
+
+function closeProductDetail() {
+  document.getElementById("productDetailModal").classList.remove("active");
+  document.getElementById("productDetailModal").setAttribute("aria-hidden", "true");
+}
+
+function renderProductDetail() {
+  const p = findProduct(detailState.productId);
+  if (!p) return;
+
+  const stock = Number(p.stock) || 0;
+  const isOut = stock <= 0;
+  const isLow = !isOut && stock <= 5;
+  const discountPct = p.oldPrice ? Math.round(100 - (p.price / p.oldPrice) * 100) : null;
+  const images = p.images && p.images.length ? p.images : [""];
+  const isWished = wishlist.includes(p.id);
+
+  document.getElementById("detailMainImage").src = images[detailState.index];
+  document.getElementById("detailMainImage").alt = p.name;
+
+  const discountBadge = document.getElementById("detailDiscountBadge");
+  discountBadge.hidden = !discountPct;
+  if (discountPct) discountBadge.textContent = `-${discountPct}%`;
+
+  document.getElementById("detailNewBadge").hidden = !(p.isNew && !isOut);
+
+  const wishBtn = document.getElementById("detailWishBtn");
+  wishBtn.classList.toggle("active", isWished);
+  wishBtn.querySelector("svg").setAttribute("fill", isWished ? "currentColor" : "none");
+
+  document.getElementById("detailThumbs").innerHTML = images.map((src, i) => `
+    <img src="${src}" alt="" class="${i === detailState.index ? "active" : ""}" data-index="${i}">
+  `).join("");
+  document.querySelectorAll("#detailThumbs img").forEach(thumb => {
+    thumb.addEventListener("click", () => {
+      detailState.index = Number(thumb.dataset.index);
+      renderProductDetail();
+    });
+  });
+
+  document.getElementById("detailCategory").textContent = p.category || "";
+  document.getElementById("detailName").textContent = p.name || "";
+  document.getElementById("detailPriceRow").innerHTML = `
+    <span class="price">${money(p.price || 0)}</span>
+    ${p.oldPrice ? `<span class="old-price">${money(p.oldPrice)}</span>` : ""}
+  `;
+  const stockEl = document.getElementById("detailStock");
+  stockEl.textContent = isOut ? "Out of stock" : (isLow ? `Only ${stock} left` : "In stock");
+  stockEl.className = "stock " + (isOut ? "out" : (isLow ? "low" : "in"));
+  document.getElementById("detailDesc").textContent = p.description || "";
+
+  detailState.qty = Math.min(detailState.qty, stock || 1);
+  document.getElementById("detailQtyValue").textContent = detailState.qty;
+
+  document.getElementById("detailBuyBlock").hidden = isOut;
+  document.getElementById("detailNotifyBtn").hidden = !isOut;
+}
+
+function bindDetailEvents() {
+  document.getElementById("closeDetailBtn").addEventListener("click", closeProductDetail);
+  document.getElementById("productDetailModal").addEventListener("click", (e) => {
+    if (e.target.id === "productDetailModal") closeProductDetail();
+  });
+  document.getElementById("detailMainImageWrap").addEventListener("click", (e) => {
+    if (e.target.closest(".wish-toggle")) return;
+    openLightbox(detailState.productId, detailState.index);
+  });
+  document.getElementById("detailWishBtn").addEventListener("click", () => {
+    toggleWishlist(detailState.productId);
+    renderProductDetail();
+  });
+  document.getElementById("detailQtyMinus").addEventListener("click", () => {
+    detailState.qty = Math.max(1, detailState.qty - 1);
+    document.getElementById("detailQtyValue").textContent = detailState.qty;
+  });
+  document.getElementById("detailQtyPlus").addEventListener("click", () => {
+    const p = findProduct(detailState.productId);
+    const max = p ? Number(p.stock) : 99;
+    detailState.qty = Math.min(max, detailState.qty + 1);
+    document.getElementById("detailQtyValue").textContent = detailState.qty;
+  });
+  document.getElementById("detailAddToCart").addEventListener("click", () => {
+    const p = findProduct(detailState.productId);
+    addToCart(detailState.productId, detailState.qty);
+    showToast(`${p.name} added to cart`);
+  });
+  document.getElementById("detailBuyNow").addEventListener("click", () => {
+    addToCart(detailState.productId, detailState.qty);
+    closeProductDetail();
+    openCart();
+  });
+  document.getElementById("detailNotifyBtn").addEventListener("click", () => {
+    const p = findProduct(detailState.productId);
+    if (p) notifyMe(p);
+  });
 }
 
 /* ---------- Cart logic ---------- */
@@ -686,4 +814,6 @@ function bindGlobalEvents() {
   document.getElementById("lightboxModal").addEventListener("click", (e) => {
     if (e.target.id === "lightboxModal") closeLightbox();
   });
+
+  bindDetailEvents();
 }
