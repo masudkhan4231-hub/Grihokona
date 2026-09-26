@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grihokona — Curated Home & Lifestyle Pieces, Delivered Across Bangladesh</title>
+<meta name="description" content="Grihokona curates fine home and lifestyle pieces at honest prices. Cash on delivery, anywhere in Bangladesh.">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Grihokona — Curated Home & Lifestyle Pieces">
+<meta property="og:description" content="Boutique-quality home & lifestyle pieces, delivered across Bangladesh. Cash on delivery available.">
+<meta property="og:image" content="images/og-cover.jpg">
+<meta property="og:url" content="https://your-username.github.io/your-repo/">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛍️</text></svg>">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+
+<!-- =========================================================
+     FACEBOOK PIXEL
+     Replace YOUR_PIXEL_ID below with your real Pixel ID from
+     Facebook Events Manager. Until you do, this code loads but
+     tracks nothing harmful — safe to leave in place.
+     ========================================================= -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', 'YOUR_PIXEL_ID');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"
+/></noscript>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="#home" class="brand">
+      <img src="images/logo.png" alt="Grihokona" class="brand-logo" onerror="this.style.display='none'">
+      <span class="brand-name">Grihokona</span>
+    </a>
+    <nav class="main-nav">
+      <a href="#shop">Shop</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#faq">FAQ</a>
+      <a href="#delivery">Delivery</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="header-icons">
+      <button class="cart-btn" id="headerWishlistBtn" aria-label="Open wishlist">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7.5-4.6-10-9.2C.4 8.4 2 4.5 5.8 4a5 5 0 0 1 6.2 3 5 5 0 0 1 6.2-3c3.8.5 5.4 4.4 3.8 7.8C19.5 16.4 12 21 12 21Z"/></svg>
+        <span class="cart-count" id="wishlistCount">0</span>
+      </button>
+      <button class="cart-btn" id="headerCartBtn" aria-label="Open cart">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h2l2.6 12.4a2 2 0 0 0 2 1.6h8.8a2 2 0 0 0 2-1.6L21 7H6"/></svg>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="home">
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <p class="hero-kicker">Complimentary delivery inside Dhaka, over ৳1500</p>
+        <h1>Quiet luxury, for every corner of home.</h1>
+        <p class="hero-sub">Grihokona curates fine home and lifestyle pieces — the kind of quality you'd expect from a boutique, priced so more homes across Bangladesh can enjoy it.</p>
+        <div class="hero-actions">
+          <a href="#shop" class="btn btn-primary">Explore the collection</a>
+          <a href="https://wa.me/8801903770516" target="_blank" rel="noopener" class="btn btn-ghost whatsapp-link">Message us on WhatsApp</a>
+        </div>
+      </div>
+      <div class="hero-media">
+        <img src="images/hero.jpg" alt="Grihokona home and lifestyle products" onerror="this.parentElement.classList.add('img-fallback')">
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CATEGORIES + SEARCH ============ -->
+  <section class="categories" aria-label="Product categories">
+    <div class="container">
+      <div class="shop-controls">
+        <div class="cat-scroll" id="categoryScroll">
+          <button class="cat-chip active" data-category="all">All Products</button>
+          <!-- category chips are injected by script.js from PRODUCTS -->
+        </div>
+        <div class="search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="search" id="productSearch" placeholder="Search products…" aria-label="Search products">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FEATURED / SHOP ============ -->
+  <section class="shop" id="shop">
+    <div class="container">
+      <div class="section-head">
+        <h2>The collection</h2>
+        <p>Pieces chosen for how they make a home feel — not just how they look.</p>
+      </div>
+      <div class="product-grid" id="productGrid">
+        <!-- product cards injected by script.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHY CHOOSE US ============ -->
+  <section class="why-us" id="why-us">
+    <div class="container">
+      <div class="section-head">
+        <h2>Why Grihokona</h2>
+      </div>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-icon">✓</div>
+          <h3>Curated, not mass-produced</h3>
+          <p>Every piece is chosen and inspected before it reaches you.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">৳</div>
+          <h3>Boutique quality, honest prices</h3>
+          <p>No middleman markups — the price you see is the price you pay.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">⚡</div>
+          <h3>Dispatched with care</h3>
+          <p>Orders placed before 5 PM are packed and shipped the same day.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">💬</div>
+          <h3>A real person, always</h3>
+          <p>Talk to us directly on WhatsApp, before and after you order.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TESTIMONIALS ============ -->
+  <section class="testimonials" id="reviews">
+    <div class="container">
+      <div class="section-head">
+        <h2>What customers say</h2>
+      </div>
+      <div class="testimonial-grid">
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="quote">The pour-over set looks and feels far more expensive than what I paid. Packaging was excellent too.</p>
+          <p class="author">— Farhana A., Dhanmondi</p>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="quote">Ordered on WhatsApp, delivered in two days, exactly as shown. Will definitely order again.</p>
+          <p class="author">— Imran K., Chattogram</p>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="quote">Quality is genuinely boutique-level. The bedsheets are the softest I've bought in Bangladesh.</p>
+          <p class="author">— Nusrat J., Uttara</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DELIVERY / COD ============ -->
+  <section class="delivery" id="delivery">
+    <div class="container delivery-inner">
+      <div class="delivery-copy">
+        <h2>Delivery & payment</h2>
+        <p>We deliver across Bangladesh through trusted courier partners. Pay when your order arrives at your door — no advance payment, ever.</p>
+        <ul class="delivery-list">
+          <li><strong>Cash on Delivery</strong> — pay the courier in cash when you receive your parcel.</li>
+          <li><strong>Inside Dhaka</strong> — usually delivered in 1–2 days.</li>
+          <li><strong>Outside Dhaka</strong> — usually delivered in 3–5 days.</li>
+        </ul>
+      </div>
+      <div class="delivery-rates">
+        <div class="rate-card">
+          <span class="rate-label">Inside Dhaka</span>
+          <span class="rate-value" id="rateDhaka">৳70</span>
+        </div>
+        <div class="rate-card">
+          <span class="rate-label">Outside Dhaka</span>
+          <span class="rate-value" id="rateOutside">৳130</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="section-head">
+        <h2>Frequently asked questions</h2>
+      </div>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>How long does delivery take?</summary>
+          <p>Usually 1–2 days inside Dhaka and 3–5 days outside Dhaka, once your order is confirmed on WhatsApp.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Do I need to pay in advance?</summary>
+          <p>No. We only offer Cash on Delivery — you pay the courier when your parcel arrives.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Can I return or exchange a product?</summary>
+          <p>Yes, message us on WhatsApp within 24 hours of delivery if there's a genuine issue with your order, and we'll sort it out.</p>
+        </details>
+        <details class="faq-item">
+          <summary>How do I place an order?</summary>
+          <p>Add products to your cart, fill in your delivery details at checkout, and confirm — it opens WhatsApp with your order ready to send.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What if a product is out of stock?</summary>
+          <p>Tap "Notify Me" on the product — it opens WhatsApp so we can message you the moment it's back.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section class="contact" id="contact">
+    <div class="container contact-inner">
+      <div>
+        <h2>Let's talk</h2>
+        <p>Questions about a piece, or your order? We reply fastest on WhatsApp.</p>
+      </div>
+      <div class="contact-actions">
+        <a href="https://wa.me/8801903770516" target="_blank" rel="noopener" class="btn btn-primary whatsapp-link">Chat on WhatsApp</a>
+        <a href="tel:+8801903770516" class="btn btn-ghost">Call us</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div>
+      <span class="brand-name">Grihokona</span>
+      <p>Curated home & lifestyle pieces, delivered across Bangladesh.</p>
+    </div>
+    <p class="footer-note">© <span id="year"></span> Grihokona. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- ============ FLOATING WHATSAPP BUTTON ============ -->
+<a href="https://wa.me/8801903770516" target="_blank" rel="noopener" class="fab-whatsapp" aria-label="Chat on WhatsApp">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.5 0-9.96 4.46-9.96 9.96 0 1.76.46 3.42 1.26 4.86L2 22l5.3-1.39a9.9 9.9 0 0 0 4.74 1.2h.01c5.5 0 9.96-4.46 9.96-9.96S17.54 2 12.04 2Zm5.8 14.24c-.24.68-1.4 1.3-1.93 1.36-.5.06-1.02.26-3.4-.71-2.86-1.18-4.7-4.05-4.84-4.24-.14-.19-1.16-1.54-1.16-2.94 0-1.4.73-2.08.99-2.36.26-.28.57-.35.76-.35h.55c.18 0 .42-.03.64.5.24.57.8 1.97.87 2.11.07.14.12.3.02.49-.1.19-.15.3-.3.46-.14.16-.3.36-.43.48-.14.14-.3.29-.13.57.17.28.75 1.24 1.62 2 1.11.99 2.05 1.3 2.33 1.44.28.14.44.12.6-.07.17-.19.71-.83.9-1.11.19-.28.38-.23.63-.14.26.09 1.65.78 1.93.92.28.14.47.21.53.33.07.12.07.68-.17 1.36Z"/></svg>
+</a>
+
+<!-- ============ MOBILE STICKY NAV ============ -->
+<nav class="mobile-nav" aria-label="Mobile navigation">
+  <a href="#home" class="mnav-item"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><span>Home</span></a>
+  <a href="#shop" class="mnav-item"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16"/></svg><span>Shop</span></a>
+  <button class="mnav-item mnav-cart" id="mobileWishlistBtn"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7.5-4.6-10-9.2C.4 8.4 2 4.5 5.8 4a5 5 0 0 1 6.2 3 5 5 0 0 1 6.2-3c3.8.5 5.4 4.4 3.8 7.8C19.5 16.4 12 21 12 21Z"/></svg><span>Saved</span><span class="mnav-badge" id="mobileWishlistCount">0</span></button>
+  <button class="mnav-item mnav-cart" id="mobileCartBtn"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="21" r="1.5"/><circle cx="18" cy="21" r="1.5"/><path d="M2 3h2l2.6 12.4a2 2 0 0 0 2 1.6h8.8a2 2 0 0 0 2-1.6L21 7H6"/></svg><span>Cart</span><span class="mnav-badge" id="mobileCartCount">0</span></button>
+  <a href="#contact" class="mnav-item"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.4 8.4 0 0 1-8.9 8.4 8.6 8.6 0 0 1-3.6-.8L3 21l1.9-5.4A8.4 8.4 0 1 1 21 11.5Z"/></svg><span>Contact</span></a>
+</nav>
+
+<!-- ============ CART DRAWER ============ -->
+<div class="overlay" id="overlay"></div>
+<aside class="cart-drawer" id="cartDrawer" aria-label="Shopping cart">
+  <div class="drawer-head">
+    <h3>Your cart</h3>
+    <button class="icon-btn" id="closeCartBtn" aria-label="Close cart">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <!-- injected by script.js -->
+  </div>
+  <div class="cart-summary">
+    <div class="summary-row">
+      <span>Subtotal</span>
+      <span id="cartSubtotal">৳0</span>
+    </div>
+    <button class="btn btn-primary btn-block" id="checkoutBtn">Proceed to checkout</button>
+  </div>
+</aside>
+
+<!-- ============ WISHLIST DRAWER ============ -->
+<aside class="cart-drawer" id="wishlistDrawer" aria-label="Wishlist">
+  <div class="drawer-head">
+    <h3>Saved for later</h3>
+    <button class="icon-btn" id="closeWishlistBtn" aria-label="Close wishlist">✕</button>
+  </div>
+  <div class="cart-items" id="wishlistItems">
+    <!-- injected by script.js -->
+  </div>
+</aside>
+
+<!-- ============ CHECKOUT MODAL ============ -->
+<div class="modal" id="checkoutModal" aria-hidden="true">
+  <div class="modal-card">
+    <div class="drawer-head">
+      <h3 id="checkoutTitle">Checkout</h3>
+      <button class="icon-btn" id="closeCheckoutBtn" aria-label="Close checkout">✕</button>
+    </div>
+
+    <!-- Step 1: form -->
+    <div class="checkout-step" id="checkoutFormStep">
+      <form id="checkoutForm">
+        <label class="field">
+          <span>Full name</span>
+          <input type="text" name="name" required placeholder="e.g. Md Karim Uddin">
+        </label>
+        <label class="field">
+          <span>Mobile number</span>
+          <input type="tel" name="phone" required placeholder="01XXXXXXXXX" pattern="^01[0-9]{9}$">
+        </label>
+        <label class="field">
+          <span>Full address</span>
+          <textarea name="address" required placeholder="House, Road, Area"></textarea>
+        </label>
+        <label class="field">
+          <span>Area / Thana</span>
+          <input type="text" name="thana" required placeholder="e.g. Mirpur, Dhaka">
+        </label>
+        <label class="field radio-field">
+          <span>Delivery zone</span>
+          <div class="radio-group">
+            <label><input type="radio" name="zone" value="dhaka" checked> Inside Dhaka</label>
+            <label><input type="radio" name="zone" value="outside"> Outside Dhaka</label>
+          </div>
+        </label>
+        <label class="field">
+          <span>Note (optional)</span>
+          <textarea name="note" placeholder="Anything we should know?"></textarea>
+        </label>
+        <button type="submit" class="btn btn-primary btn-block">Review order</button>
+      </form>
+    </div>
+
+    <!-- Step 2: review -->
+    <div class="checkout-step" id="checkoutReviewStep" hidden>
+      <div id="reviewContent"></div>
+      <div class="review-actions">
+        <button class="btn btn-ghost" id="backToFormBtn">Back</button>
+        <button class="btn btn-primary" id="confirmOrderBtn">Confirm order via WhatsApp</button>
+      </div>
+    </div>
+
+    <!-- Step 3: done -->
+    <div class="checkout-step" id="checkoutDoneStep" hidden>
+      <div class="done-box">
+        <div class="done-icon">✓</div>
+        <h4>Order sent!</h4>
+        <p>We opened WhatsApp with your order details. Please tap send to confirm with us.</p>
+        <p class="order-id-note">Order ID: <strong id="doneOrderId"></strong></p>
+        <button class="btn btn-primary btn-block" id="doneCloseBtn">Continue shopping</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ IMAGE LIGHTBOX ============ -->
+<div class="modal lightbox-modal" id="lightboxModal" aria-hidden="true">
+  <div class="lightbox-card">
+    <button class="icon-btn lightbox-close" id="closeLightboxBtn" aria-label="Close image viewer">✕</button>
+    <div class="lightbox-main">
+      <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous image">‹</button>
+      <img id="lightboxImage" src="" alt="">
+      <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next image">›</button>
+    </div>
+    <div class="lightbox-thumbs" id="lightboxThumbs"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
