@@ -16,8 +16,8 @@ const firebaseConfig = {
 
 // Cloudinary — used only for image uploads from the admin panel.
 // From cloudinary.com dashboard + Settings → Upload → Upload presets.
-const CLOUDINARY_CLOUD_NAME = "YOUR_CLOUD_NAME";
-const CLOUDINARY_UPLOAD_PRESET = "YOUR_UNSIGNED_UPLOAD_PRESET";
+const CLOUDINARY_CLOUD_NAME = "cbqaeley";
+const CLOUDINARY_UPLOAD_PRESET = "grihokona_products";
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
