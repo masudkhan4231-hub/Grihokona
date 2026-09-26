@@ -1,19 +1,26 @@
-# Grihokona — Static E-commerce Site (WhatsApp Ordering)
+# Grihokona — E-commerce Site with Admin Panel (WhatsApp Ordering)
 
-A static, mobile-first storefront for a small Bangladesh-based business. No backend, no login — customers browse, add to cart, fill a checkout form, and the order is sent to your WhatsApp as a ready-to-read message.
+A mobile-first storefront for a small Bangladesh-based business. Customers browse, add to cart, fill a checkout form, and the order is sent to your WhatsApp as a ready-to-read message. Products, photos, and stock are managed live from a private admin panel — no code editing needed for day-to-day updates.
 
 ## Files
 
 ```
-index.html     structure of the site
-style.css      all styling (colors, layout, responsiveness)
-script.js      products, cart, checkout, WhatsApp message logic
-images/        put your logo and product photos here
+index.html          the storefront customers see
+admin.html           your private admin panel (product management)
+style.css            storefront styling
+admin.css            admin panel styling
+script.js             storefront logic (cart, checkout, WhatsApp)
+admin.js               admin panel logic (product CRUD, image upload)
+firebase-config.js     your Firebase + Cloudinary keys (fill this in — see ADMIN-SETUP.md)
+images/                logo, hero photo, and Facebook preview image
+ADMIN-SETUP.md          one-time setup guide for the admin panel's backend
 ```
+
+**First-time setup:** before the site can show any products, follow `ADMIN-SETUP.md` once to connect the free Firebase + Cloudinary backend. It takes about 15–20 minutes.
 
 ## What to edit, and where
 
-All the settings you'll touch regularly are at the **top of `script.js`**, inside two blocks: `CONFIG` and `PRODUCTS`. You never need to touch `index.html` or `style.css` for routine updates.
+Business settings you'll touch occasionally are at the **top of `script.js`**, inside `CONFIG`. Products, photos, and stock are managed from `admin.html` — you don't edit code for those anymore.
 
 ### 1. Business name
 `script.js` → `CONFIG.BUSINESS_NAME`
@@ -31,22 +38,8 @@ This single value drives every "order via WhatsApp" click. Format: country code 
 
 There are two more places with a placeholder WhatsApp link for direct chat buttons — search `index.html` for `wa.me/8801XXXXXXXXX` and replace both with the same number.
 
-### 3. Products
-`script.js` → the `PRODUCTS` array. Copy an existing block to add a product, or delete one to remove it:
-```js
-{
-  id: 9,                              // must be unique
-  name: "Product Name",
-  price: 1000,                        // current price
-  oldPrice: 1200,                     // set to null if no discount
-  image: "images/products/photo.jpg", // path to the image file
-  category: "Kitchen",                // filter chips are generated from these
-  description: "Short one-line description.",
-  stock: 10,                          // 0 shows "Sold out" and hides buy buttons
-  featured: true
-}
-```
-Categories (the filter chips at the top of the shop section) are generated automatically from whatever categories your products use — you don't edit them separately.
+### 3. Products, photos & stock
+These are no longer edited in code. Open `admin.html` on your live site, log in, and use **"+ Add Product"** to add items, edit prices/stock, or upload photos — changes appear on the storefront immediately. See `ADMIN-SETUP.md` for the one-time backend setup.
 
 ### 4. Delivery charges
 `script.js` → `CONFIG`
@@ -60,13 +53,9 @@ FREE_DELIVERY_THRESHOLD_DHAKA: 1500,  // set to 0 to disable free delivery
 Put your logo file at `images/logo.png` (transparent PNG, roughly 120×40px works well). If the file is missing, the site falls back to showing just the text name — it won't break.
 
 ### 6. Product images
-Put photos in `images/products/` and list them in each product's `images` array — the first one is the main card photo, and any extra ones let customers browse a gallery and zoom in. One photo is fine too:
-```js
-images: ["images/products/my-item-1.jpg", "images/products/my-item-2.jpg"]
-```
-Square images (1:1) look best in the grid. If an image is missing or fails to load, the card still renders cleanly without a broken-image icon.
+Uploaded directly from `admin.html` when you add or edit a product (drag & drop, or tap to choose). No file naming or folder management needed — they're hosted on Cloudinary automatically. Square images (1:1) look best in the grid.
 
-Recommended: compress photos before uploading (aim under 150–200 KB each) so the site stays fast on slower mobile connections.
+Recommended: keep photos under 1-2MB each so they upload quickly on mobile data.
 
 ### 7. Hero and social preview images
 - `images/hero.jpg` — the photo shown in the homepage hero.
@@ -77,7 +66,7 @@ Recommended: compress photos before uploading (aim under 150–200 KB each) so t
 1. Customer adds products to the cart (quantity is adjustable per product).
 2. They tap **Proceed to checkout** and fill in name, mobile number, address, area/thana, delivery zone, and an optional note.
 3. They review the full order (items, subtotal, delivery charge, total) before confirming.
-4. On **Confirm order**, the site generates a unique Order ID (e.g. `NOORJA-20260926-001`) and opens WhatsApp with a pre-filled message containing everything — the customer just taps send.
+4. On **Confirm order**, the site generates a unique Order ID (e.g. `GRIHOKONA-20260926-001`) and opens WhatsApp with a pre-filled message containing everything — the customer just taps send.
 5. The cart is cleared automatically after handoff to WhatsApp.
 
 Cart contents are saved in the browser's `localStorage`, so a customer's cart survives a page refresh (but is private to their own device/browser).
@@ -114,5 +103,5 @@ Near the top of `index.html`'s `<head>`, replace both instances of `YOUR_PIXEL_I
 ## Notes
 
 - This is a front-end-only site: there's no order database. Every order arrives to you as a WhatsApp message — treat that as your order log, or copy details into a spreadsheet as they come in.
-- Stock numbers are not automatically reduced after an order — update the `stock` value in `PRODUCTS` yourself as items sell out.
+- Stock numbers are not automatically reduced after an order — update the stock value for that product in `admin.html` yourself as items sell out.
 - Everything is plain HTML/CSS/JS, so any text editor (including GitHub's own web editor) is enough to make changes — no build step required.

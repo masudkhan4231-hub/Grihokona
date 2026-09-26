@@ -1,12 +1,13 @@
 /* =========================================================
-   GRIHOKONA — Store logic
-   Everything you need to change day-to-day lives in the
-   CONFIG and PRODUCTS sections right below. Nothing else in
-   this file needs to change for normal store updates.
+   GRIHOKONA — Storefront logic
+   Product data now lives in Firebase Firestore and is managed
+   from admin.html — this file only reads it and never edits it.
+   Store-wide settings (WhatsApp number, delivery charges) are
+   still plain JS below, since they rarely change.
    ========================================================= */
 
 /* ---------------------------------------------------------
-   1. STORE CONFIG — edit these to rebrand / retarget
+   STORE CONFIG — edit these to rebrand / retarget
    --------------------------------------------------------- */
 const CONFIG = {
   BUSINESS_NAME: "Grihokona",
@@ -28,149 +29,22 @@ const CONFIG = {
   CURRENCY_SYMBOL: "৳"
 };
 
-/* ---------------------------------------------------------
-   2. PRODUCTS — add, remove or edit items here.
-   Fields:
-     id          unique number
-     name        product name
-     price       current selling price (Taka)
-     oldPrice    optional strike-through price, or null
-     images      array of image paths — first one is the main
-                 product photo, the rest show in the gallery
-                 dots and the click-to-zoom viewer. Use at
-                 least one path; add more as you get more photos.
-     category    used for the filter chips
-     description short one-line description shown on the card
-     stock       integer stock count. 0 = "Out of stock" and
-                 shows a "Notify Me" WhatsApp button instead
-     featured    true/false — reserved for future use
-     isNew       true/false — shows a "New" badge on the card
-   --------------------------------------------------------- */
-const PRODUCTS = [
-  {
-    id: 1,
-    name: "Ceramic Pour-Over Coffee Set",
-    price: 1450,
-    oldPrice: 1800,
-    images: [
-      "images/products/coffee-set-1.jpg",
-      "images/products/coffee-set-2.jpg",
-      "images/products/coffee-set-3.jpg"
-    ],
-    category: "Kitchen",
-    description: "Hand-glazed stoneware dripper, server and two cups.",
-    stock: 12,
-    featured: true,
-    isNew: false
-  },
-  {
-    id: 2,
-    name: "Linen Bedsheet Set (King)",
-    price: 2200,
-    oldPrice: null,
-    images: [
-      "images/products/linen-bedsheet-1.jpg",
-      "images/products/linen-bedsheet-2.jpg"
-    ],
-    category: "Bedroom",
-    description: "Pure cotton-linen blend, finished for a soft, breathable weave.",
-    stock: 8,
-    featured: true,
-    isNew: true
-  },
-  {
-    id: 3,
-    name: "Bamboo Storage Organizer",
-    price: 890,
-    oldPrice: 1050,
-    images: [
-      "images/products/bamboo-organizer-1.jpg",
-      "images/products/bamboo-organizer-2.jpg"
-    ],
-    category: "Storage",
-    description: "3-tier stackable organizer for kitchen or desk.",
-    stock: 20,
-    featured: true,
-    isNew: false
-  },
-  {
-    id: 4,
-    name: "Scented Soy Candle Trio",
-    price: 650,
-    oldPrice: null,
-    images: [ "images/products/candle-trio-1.jpg" ],
-    category: "Decor",
-    description: "Sandalwood, lavender and citrus, 40hr burn each.",
-    stock: 0,
-    featured: false,
-    isNew: false
-  },
-  {
-    id: 5,
-    name: "Cast Iron Skillet 10-inch",
-    price: 1750,
-    oldPrice: 2100,
-    images: [
-      "images/products/cast-iron-skillet-1.jpg",
-      "images/products/cast-iron-skillet-2.jpg"
-    ],
-    category: "Kitchen",
-    description: "Pre-seasoned, oven safe, built to last decades.",
-    stock: 5,
-    featured: true,
-    isNew: false
-  },
-  {
-    id: 6,
-    name: "Handwoven Jute Rug (3x5 ft)",
-    price: 1600,
-    oldPrice: null,
-    images: [ "images/products/jute-rug-1.jpg" ],
-    category: "Decor",
-    description: "Natural fibre rug, reversible weave pattern.",
-    stock: 14,
-    featured: false,
-    isNew: true
-  },
-  {
-    id: 7,
-    name: "Stainless Steel Water Bottle 1L",
-    price: 590,
-    oldPrice: 750,
-    images: [ "images/products/water-bottle-1.jpg" ],
-    category: "Lifestyle",
-    description: "Double-wall insulated, keeps cold for 18 hours.",
-    stock: 30,
-    featured: true,
-    isNew: false
-  },
-  {
-    id: 8,
-    name: "Cotton Table Runner",
-    price: 420,
-    oldPrice: null,
-    images: [ "images/products/table-runner-1.jpg" ],
-    category: "Decor",
-    description: "Block-printed, 13x72 inches.",
-    stock: 3,
-    featured: false,
-    isNew: false
-  }
-];
-
 /* =========================================================
    Everything below this line is store logic.
-   You shouldn't need to edit it for routine updates.
+   Product data comes live from Firestore (see firebase-config.js
+   and admin.html) — you manage products from the admin panel,
+   not by editing this file.
    ========================================================= */
 
 const CART_KEY = "grihokona_cart_v1";
 const WISHLIST_KEY = "grihokona_wishlist_v1";
 
+let PRODUCTS = [];               // populated live from Firestore
 let cart = loadList(CART_KEY);
-let wishlist = loadList(WISHLIST_KEY, true);
+let wishlist = loadList(WISHLIST_KEY);
 let activeCategory = "all";
 let searchQuery = "";
-let pendingOrder = null;   // holds order details between review and confirm
+let pendingOrder = null;         // holds order details between review and confirm
 let lightboxState = { productId: null, index: 0 };
 
 /* ---------- Init ---------- */
@@ -179,19 +53,36 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("rateDhaka").textContent = money(CONFIG.DELIVERY_CHARGE_DHAKA);
   document.getElementById("rateOutside").textContent = money(CONFIG.DELIVERY_CHARGE_OUTSIDE);
 
-  renderCategories();
-  renderProducts();
+  bindGlobalEvents();
   renderCart();
   renderWishlist();
-  bindGlobalEvents();
+  subscribeToProducts();
 });
+
+/* ---------- Live product feed from Firestore ---------- */
+function subscribeToProducts() {
+  const grid = document.getElementById("productGrid");
+  grid.innerHTML = `<p style="color:var(--text-muted)">Loading products…</p>`;
+
+  db.collection("products").orderBy("createdAt", "desc").onSnapshot(
+    (snapshot) => {
+      PRODUCTS = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      renderCategories();
+      renderProducts();
+    },
+    (error) => {
+      console.error("Failed to load products:", error);
+      grid.innerHTML = `<p style="color:var(--text-muted)">Couldn't load products right now. Please refresh the page.</p>`;
+    }
+  );
+}
 
 /* ---------- Helpers ---------- */
 function money(n) {
   return CONFIG.CURRENCY_SYMBOL + Number(n).toLocaleString("en-US");
 }
 
-function loadList(key, isIdArray) {
+function loadList(key) {
   try {
     const raw = localStorage.getItem(key);
     return raw ? JSON.parse(raw) : [];
@@ -238,7 +129,7 @@ function escapeHtml(str) {
 
 /* ---------- Categories ---------- */
 function renderCategories() {
-  const categories = ["all", ...new Set(PRODUCTS.map(p => p.category))];
+  const categories = ["all", ...new Set(PRODUCTS.map(p => p.category).filter(Boolean))];
   const scroll = document.getElementById("categoryScroll");
   scroll.innerHTML = categories.map(cat => `
     <button class="cat-chip ${cat === activeCategory ? "active" : ""}" data-category="${escapeHtml(cat)}">
@@ -261,7 +152,7 @@ function getFilteredProducts() {
   let list = activeCategory === "all" ? PRODUCTS : PRODUCTS.filter(p => p.category === activeCategory);
   if (searchQuery.trim()) {
     const q = searchQuery.trim().toLowerCase();
-    list = list.filter(p => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
+    list = list.filter(p => (p.name || "").toLowerCase().includes(q) || (p.category || "").toLowerCase().includes(q));
   }
   return list;
 }
@@ -270,6 +161,10 @@ function renderProducts() {
   const grid = document.getElementById("productGrid");
   const list = getFilteredProducts();
 
+  if (PRODUCTS.length === 0) {
+    grid.innerHTML = `<p style="color:var(--text-muted)">New pieces are being added soon — check back shortly, or message us on WhatsApp for what's available now.</p>`;
+    return;
+  }
   if (list.length === 0) {
     grid.innerHTML = `<p style="color:var(--text-muted)">No products match your search.</p>`;
     return;
@@ -324,14 +219,16 @@ function renderProducts() {
 }
 
 function productCardHtml(p) {
-  const isOut = p.stock <= 0;
-  const isLow = !isOut && p.stock <= 5;
-  const stockLabel = isOut ? "Out of stock" : (isLow ? `Only ${p.stock} left` : "In stock");
+  const stock = Number(p.stock) || 0;
+  const isOut = stock <= 0;
+  const isLow = !isOut && stock <= 5;
+  const stockLabel = isOut ? "Out of stock" : (isLow ? `Only ${stock} left` : "In stock");
   const stockClass = isOut ? "out" : (isLow ? "low" : "in");
   const discountPct = p.oldPrice ? Math.round(100 - (p.price / p.oldPrice) * 100) : null;
   const isWished = wishlist.includes(p.id);
-  const dots = p.images.length > 1
-    ? `<div class="gallery-dots">${p.images.map((_, i) => `<span class="${i === 0 ? "active" : ""}"></span>`).join("")}</div>`
+  const images = p.images && p.images.length ? p.images : [""];
+  const dots = images.length > 1
+    ? `<div class="gallery-dots">${images.map((_, i) => `<span class="${i === 0 ? "active" : ""}"></span>`).join("")}</div>`
     : "";
 
   return `
@@ -343,16 +240,16 @@ function productCardHtml(p) {
         <button class="wish-toggle ${isWished ? "active" : ""}" type="button" aria-label="Save to wishlist">
           <svg viewBox="0 0 24 24" fill="${isWished ? "currentColor" : "none"}" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7.5-4.6-10-9.2C.4 8.4 2 4.5 5.8 4a5 5 0 0 1 6.2 3 5 5 0 0 1 6.2-3c3.8.5 5.4 4.4 3.8 7.8C19.5 16.4 12 21 12 21Z"/></svg>
         </button>
-        <img src="${productImage(p)}" alt="${escapeHtml(p.name)}" loading="lazy"
+        <img src="${productImage(p)}" alt="${escapeHtml(p.name || "")}" loading="lazy"
              onerror="this.parentElement.style.background='var(--primary-tint)'; this.remove();">
         ${dots}
       </div>
       <div class="product-body">
-        <span class="product-cat">${escapeHtml(p.category)}</span>
-        <span class="product-name">${escapeHtml(p.name)}</span>
-        <span class="product-desc">${escapeHtml(p.description)}</span>
+        <span class="product-cat">${escapeHtml(p.category || "")}</span>
+        <span class="product-name">${escapeHtml(p.name || "")}</span>
+        <span class="product-desc">${escapeHtml(p.description || "")}</span>
         <div class="price-row">
-          <span class="price">${money(p.price)}</span>
+          <span class="price">${money(p.price || 0)}</span>
           ${p.oldPrice ? `<span class="old-price">${money(p.oldPrice)}</span>` : ""}
         </div>
         <span class="stock ${stockClass}">${stockLabel}</span>
@@ -423,7 +320,7 @@ function renderWishlist() {
   }).join("");
 
   container.querySelectorAll(".cart-line").forEach(line => {
-    const id = Number(line.dataset.wishId);
+    const id = line.dataset.wishId;
     line.querySelector(".wish-add-cart").addEventListener("click", () => {
       addToCart(id, 1);
       showToast("Added to cart");
@@ -451,7 +348,7 @@ function notifyMe(product) {
 /* ---------- Lightbox / gallery zoom ---------- */
 function openLightbox(productId, index) {
   const p = findProduct(productId);
-  if (!p) return;
+  if (!p || !p.images || !p.images.length) return;
   lightboxState = { productId, index: index || 0 };
   renderLightbox();
   document.getElementById("lightboxModal").classList.add("active");
@@ -493,10 +390,10 @@ function lightboxStep(delta) {
 /* ---------- Cart logic ---------- */
 function addToCart(productId, qty) {
   const product = findProduct(productId);
-  if (!product || product.stock <= 0) return;
+  if (!product || Number(product.stock) <= 0) return;
 
   const existing = cart.find(item => item.id === productId);
-  const maxQty = product.stock;
+  const maxQty = Number(product.stock);
 
   if (existing) {
     existing.qty = Math.min(existing.qty + qty, maxQty);
@@ -512,7 +409,7 @@ function updateQty(productId, delta) {
   const item = cart.find(i => i.id === productId);
   if (!item) return;
   const product = findProduct(productId);
-  const maxQty = product ? product.stock : 99;
+  const maxQty = product ? Number(product.stock) : 99;
 
   item.qty += delta;
   if (item.qty <= 0) {
@@ -573,7 +470,7 @@ function renderCart() {
     }).join("");
 
     container.querySelectorAll(".cart-line").forEach(line => {
-      const id = Number(line.dataset.lineId);
+      const id = line.dataset.lineId;
       line.querySelector(".qty-minus").addEventListener("click", () => updateQty(id, -1));
       line.querySelector(".qty-plus").addEventListener("click", () => updateQty(id, 1));
       line.querySelector(".remove-btn").addEventListener("click", () => removeFromCart(id));

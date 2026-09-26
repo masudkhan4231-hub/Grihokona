@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grihokona — Admin Panel</title>
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+
+<!-- ============ LOGIN SCREEN ============ -->
+<div class="admin-login" id="loginScreen">
+  <div class="admin-login-card">
+    <h1 class="admin-brand">Grihokona</h1>
+    <p class="admin-subtitle">Admin panel</p>
+    <form id="loginForm">
+      <label class="field">
+        <span>Email</span>
+        <input type="email" name="email" required autocomplete="username">
+      </label>
+      <label class="field">
+        <span>Password</span>
+        <input type="password" name="password" required autocomplete="current-password">
+      </label>
+      <p class="admin-error" id="loginError" hidden></p>
+      <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============ DASHBOARD ============ -->
+<div class="admin-dashboard" id="dashboard" hidden>
+
+  <header class="admin-topbar">
+    <span class="admin-brand-sm">Grihokona <em>Admin</em></span>
+    <button class="btn btn-ghost btn-sm" id="logoutBtn">Sign out</button>
+  </header>
+
+  <main class="admin-main">
+    <div class="admin-toolbar">
+      <div class="search-box admin-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="search" id="adminSearch" placeholder="Search products…">
+      </div>
+      <button class="btn btn-primary" id="addProductBtn">+ Add Product</button>
+    </div>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="productTableBody">
+          <tr><td colspan="6" class="admin-empty">Loading products…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<!-- ============ PRODUCT MODAL ============ -->
+<div class="modal" id="productModal" aria-hidden="true">
+  <div class="modal-card admin-modal-card">
+    <div class="drawer-head">
+      <h3 id="productModalTitle">Add product</h3>
+      <button class="icon-btn" id="closeProductModalBtn" aria-label="Close">✕</button>
+    </div>
+
+    <div class="checkout-step">
+      <form id="productForm">
+        <label class="field">
+          <span>Product name</span>
+          <input type="text" name="name" required placeholder="e.g. Ceramic Pour-Over Coffee Set">
+        </label>
+
+        <div class="field-row">
+          <label class="field">
+            <span>Price (৳)</span>
+            <input type="number" name="price" required min="0" step="1">
+          </label>
+          <label class="field">
+            <span>Old price (optional)</span>
+            <input type="number" name="oldPrice" min="0" step="1">
+          </label>
+        </div>
+
+        <div class="field-row">
+          <label class="field">
+            <span>Category</span>
+            <input type="text" name="category" required placeholder="e.g. Kitchen">
+          </label>
+          <label class="field">
+            <span>Stock quantity</span>
+            <input type="number" name="stock" required min="0" step="1">
+          </label>
+        </div>
+
+        <label class="field">
+          <span>Short description</span>
+          <textarea name="description" placeholder="One line, shown on the product card"></textarea>
+        </label>
+
+        <label class="field checkbox-field">
+          <input type="checkbox" name="isNew">
+          <span>Mark as "New" on the storefront</span>
+        </label>
+
+        <label class="field">
+          <span>Product photos</span>
+          <div class="image-drop" id="imageDrop">
+            <input type="file" id="imageInput" accept="image/*" multiple hidden>
+            <p>Tap to choose photos, or drag & drop here</p>
+            <p class="image-drop-hint">First photo is the main card image. Add more for the gallery.</p>
+          </div>
+          <div class="image-preview-row" id="imagePreviewRow"></div>
+        </label>
+
+        <p class="admin-error" id="productFormError" hidden></p>
+        <div class="review-actions">
+          <button type="button" class="btn btn-ghost" id="cancelProductBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveProductBtn">Save product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="adminOverlay"></div>
+<div class="toast" id="adminToast"></div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
