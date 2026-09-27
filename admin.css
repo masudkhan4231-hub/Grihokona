@@ -87,3 +87,20 @@
   content:"…"; position:absolute; inset:0; background:rgba(0,0,0,0.35); color:#fff;
   display:flex; align-items:center; justify-content:center; border-radius:6px; font-size:1.2rem;
 }
+
+/* ---------- Site branding card ---------- */
+.admin-card{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md);
+  padding:18px 20px; margin-bottom:20px;
+}
+.admin-card-title{ font-family:var(--font-body); font-size:1rem; font-weight:600; }
+.admin-card-sub{ color:var(--text-muted); font-size:0.82rem; margin-top:2px; margin-bottom:14px; }
+.branding-row{ display:flex; flex-direction:column; gap:16px; }
+.branding-field{ flex:1; }
+.field-label{ display:block; font-weight:600; font-size:0.85rem; margin-bottom:6px; }
+.branding-drop{ padding:14px; font-size:0.82rem; }
+#saveBrandingBtn{ margin-top:14px; }
+
+@media (min-width:640px){
+  .branding-row{ flex-direction:row; }
+}

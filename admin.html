@@ -44,6 +44,31 @@
   </header>
 
   <main class="admin-main">
+    <section class="admin-card">
+      <h3 class="admin-card-title">Site branding</h3>
+      <p class="admin-card-sub">These appear in the header and homepage of your live site.</p>
+      <div class="branding-row">
+        <div class="branding-field">
+          <span class="field-label">Logo</span>
+          <div class="image-drop branding-drop" id="logoDrop">
+            <input type="file" id="logoInput" accept="image/*" hidden>
+            <p>Tap to choose a logo</p>
+          </div>
+          <div class="image-preview-row" id="logoPreviewRow"></div>
+        </div>
+        <div class="branding-field">
+          <span class="field-label">Homepage hero photo</span>
+          <div class="image-drop branding-drop" id="heroDrop">
+            <input type="file" id="heroInput" accept="image/*" hidden>
+            <p>Tap to choose a hero photo</p>
+          </div>
+          <div class="image-preview-row" id="heroPreviewRow"></div>
+        </div>
+      </div>
+      <p class="admin-error" id="brandingError" hidden></p>
+      <button type="button" class="btn btn-primary btn-sm" id="saveBrandingBtn">Save branding</button>
+    </section>
+
     <div class="admin-toolbar">
       <div class="search-box admin-search">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
