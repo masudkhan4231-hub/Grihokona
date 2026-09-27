@@ -50,7 +50,7 @@ FREE_DELIVERY_THRESHOLD_DHAKA: 1500,  // set to 0 to disable free delivery
 ```
 
 ### 5. Logo
-Put your logo file at `images/logo.png` (transparent PNG, roughly 120×40px works well). If the file is missing, the site falls back to showing just the text name — it won't break.
+Put your logo file at `images/logo.svg` (a vector wordmark logo is already provided — replace it any time with your own PNG/SVG). If the file is missing, the site falls back to showing just the text name — it won't break.
 
 ### 6. Product images
 Uploaded directly from `admin.html` when you add or edit a product (drag & drop, or tap to choose). No file naming or folder management needed — they're hosted on Cloudinary automatically. Square images (1:1) look best in the grid.
@@ -58,7 +58,7 @@ Uploaded directly from `admin.html` when you add or edit a product (drag & drop,
 Recommended: keep photos under 1-2MB each so they upload quickly on mobile data.
 
 ### 7. Hero and social preview images
-- `images/hero.jpg` — the photo shown in the homepage hero.
+- `images/hero.svg` — the homepage hero image (a decorative illustration is already provided; replace any time with a real product photo via the admin panel's "Site branding" section, or swap this file directly).
 - `images/og-cover.jpg` — the image shown when your link is shared on Facebook (recommended size 1200×630px). Set with the `og:image` tag near the top of `index.html`.
 
 ## How ordering works
@@ -90,6 +90,7 @@ To use your own domain (e.g. `grihokona.com`) instead of the default `github.io`
 ## What's included
 
 - Product search and category filters
+- Site branding (logo + homepage hero photo) uploaded from the admin panel — no GitHub upload needed
 - Wishlist (heart icon on each product, saved in the browser, with its own drawer)
 - Product photo gallery with click-to-zoom viewer (add multiple `images` per product)
 - "New" and discount badges, "Notify Me" WhatsApp button for out-of-stock items

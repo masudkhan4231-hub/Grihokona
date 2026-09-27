@@ -122,6 +122,9 @@ input,textarea{ font-family:inherit; font-size:1rem; }
   color:var(--accent); font-family:var(--font-head); font-style:italic; font-weight:500;
   font-size:1.05rem; margin-bottom:14px;
 }
+.kicker-amount{
+  font-family:var(--font-body); font-style:normal; font-weight:600;
+}
 .hero h1{
   font-size:clamp(2.2rem, 6vw, 3.4rem);
   font-weight:500;
@@ -248,7 +251,7 @@ section{ padding:44px 0; }
   padding:18px; text-align:center;
 }
 .rate-label{ display:block; font-size:0.82rem; color:var(--text-muted); margin-bottom:6px; }
-.rate-value{ font-family:var(--font-head); font-size:1.6rem; font-weight:600; color:var(--primary-dark); }
+.rate-value{ font-family:var(--font-body); font-size:1.6rem; font-weight:700; color:var(--primary-dark); }
 
 /* ---------- Contact ---------- */
 .contact{ background:var(--primary-dark); color:#fff; }
