@@ -89,7 +89,10 @@ To use your own domain (e.g. `grihokona.com`) instead of the default `github.io`
 
 ## What's included
 
-- Product search and category filters
+- Product search and category filters (category tiles show a photo from that category's first product)
+- Star ratings and review counts (optional, per product — leave blank to hide)
+- Flexible badges (type any text like "Best Seller", "Trending", "Eco Friendly" — or leave blank and just tick "New")
+- Promo banner strip on the homepage (3 tiles — edit their text directly in index.html)
 - Site branding (logo + homepage hero photo) uploaded from the admin panel — no GitHub upload needed
 - Wishlist (heart icon on each product, saved in the browser, with its own drawer)
 - Product photo gallery with click-to-zoom viewer (add multiple `images` per product)

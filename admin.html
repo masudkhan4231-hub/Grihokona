@@ -139,9 +139,25 @@
           <textarea name="description" placeholder="One line, shown on the product card"></textarea>
         </label>
 
+        <div class="field-row">
+          <label class="field">
+            <span>Rating (0–5, optional)</span>
+            <input type="number" name="rating" min="0" max="5" step="0.1" placeholder="e.g. 4.5">
+          </label>
+          <label class="field">
+            <span>Review count (optional)</span>
+            <input type="number" name="reviewCount" min="0" step="1" placeholder="e.g. 124">
+          </label>
+        </div>
+
+        <label class="field">
+          <span>Badge text (optional)</span>
+          <input type="text" name="badgeText" placeholder="e.g. Best Seller, Trending, Eco Friendly">
+        </label>
+
         <label class="field checkbox-field">
           <input type="checkbox" name="isNew">
-          <span>Mark as "New" on the storefront</span>
+          <span>Mark as "New" on the storefront (used if badge text above is left blank)</span>
         </label>
 
         <label class="field">

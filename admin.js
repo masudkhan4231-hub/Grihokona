@@ -117,6 +117,9 @@ function openProductModal(id) {
     form.category.value = p.category || "";
     form.stock.value = p.stock != null ? p.stock : "";
     form.description.value = p.description || "";
+    form.rating.value = p.rating || "";
+    form.reviewCount.value = p.reviewCount || "";
+    form.badgeText.value = p.badgeText || "";
     form.isNew.checked = !!p.isNew;
     existingImages = (p.images || []).slice();
   } else {
@@ -247,6 +250,9 @@ document.getElementById("productForm").addEventListener("submit", async (e) => {
       category: data.get("category").trim(),
       stock: Number(data.get("stock")),
       description: data.get("description").trim(),
+      rating: data.get("rating") ? Number(data.get("rating")) : null,
+      reviewCount: data.get("reviewCount") ? Number(data.get("reviewCount")) : null,
+      badgeText: data.get("badgeText").trim() || null,
       isNew: form.isNew.checked,
       images: existingImages.concat(uploadedUrls)
     };

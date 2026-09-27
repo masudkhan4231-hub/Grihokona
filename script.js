@@ -146,20 +146,32 @@ function escapeHtml(str) {
 
 /* ---------- Categories ---------- */
 function renderCategories() {
-  const categories = ["all", ...new Set(PRODUCTS.map(p => p.category).filter(Boolean))];
+  const categories = [...new Set(PRODUCTS.map(p => p.category).filter(Boolean))];
   const scroll = document.getElementById("categoryScroll");
-  scroll.innerHTML = categories.map(cat => `
-    <button class="cat-chip ${cat === activeCategory ? "active" : ""}" data-category="${escapeHtml(cat)}">
-      ${cat === "all" ? "All Products" : escapeHtml(cat)}
-    </button>
-  `).join("");
 
-  scroll.querySelectorAll(".cat-chip").forEach(btn => {
+  if (categories.length === 0) {
+    scroll.innerHTML = "";
+    return;
+  }
+
+  scroll.innerHTML = categories.map(cat => {
+    const firstProduct = PRODUCTS.find(p => p.category === cat && p.images && p.images[0]);
+    const thumb = firstProduct ? firstProduct.images[0] : "";
+    return `
+      <button class="cat-tile ${cat === activeCategory ? "active" : ""}" data-category="${escapeHtml(cat)}">
+        <span class="cat-tile-img"><img src="${thumb}" alt="" onerror="this.style.display='none'"></span>
+        <span class="cat-tile-label">${escapeHtml(cat)} →</span>
+      </button>
+    `;
+  }).join("");
+
+  scroll.querySelectorAll(".cat-tile").forEach(btn => {
     btn.addEventListener("click", () => {
-      activeCategory = btn.dataset.category;
-      scroll.querySelectorAll(".cat-chip").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
+      const cat = btn.dataset.category;
+      activeCategory = activeCategory === cat ? "all" : cat;
+      scroll.querySelectorAll(".cat-tile").forEach(b => b.classList.toggle("active", b.dataset.category === activeCategory));
       renderProducts();
+      document.getElementById("shop").scrollIntoView({ behavior: "smooth", block: "start" });
     });
   });
 }
@@ -238,6 +250,17 @@ function renderProducts() {
   });
 }
 
+function starString(rating) {
+  const full = Math.round(rating);
+  return "★".repeat(Math.max(0, Math.min(5, full))) + "☆".repeat(5 - Math.max(0, Math.min(5, full)));
+}
+
+function tagLabel(p) {
+  if (p.badgeText && p.badgeText.trim()) return p.badgeText.trim();
+  if (p.isNew) return "New";
+  return null;
+}
+
 function productCardHtml(p) {
   const stock = Number(p.stock) || 0;
   const isOut = stock <= 0;
@@ -245,17 +268,22 @@ function productCardHtml(p) {
   const stockLabel = isOut ? "Out of stock" : (isLow ? `Only ${stock} left` : "In stock");
   const stockClass = isOut ? "out" : (isLow ? "low" : "in");
   const discountPct = p.oldPrice ? Math.round(100 - (p.price / p.oldPrice) * 100) : null;
+  const tag = tagLabel(p);
   const isWished = wishlist.includes(p.id);
   const images = p.images && p.images.length ? p.images : [""];
   const dots = images.length > 1
     ? `<div class="gallery-dots">${images.map((_, i) => `<span class="${i === 0 ? "active" : ""}"></span>`).join("")}</div>`
     : "";
+  const rating = Number(p.rating) || 0;
+  const ratingHtml = rating > 0
+    ? `<div class="rating-row"><span class="rating-stars">${starString(rating)}</span><span>${rating.toFixed(1)}${p.reviewCount ? ` (${p.reviewCount})` : ""}</span></div>`
+    : "";
 
   return `
     <div class="product-card" data-product-id="${p.id}">
       <div class="product-media">
-        ${discountPct ? `<span class="badge">-${discountPct}%</span>` : ""}
-        ${p.isNew && !isOut ? `<span class="badge badge-new" style="${discountPct ? "top:34px;" : ""}">New</span>` : ""}
+        ${discountPct ? `<span class="badge">-${discountPct}%</span>` : (tag && !isOut ? `<span class="badge badge-tag">${escapeHtml(tag)}</span>` : "")}
+        ${discountPct && tag && !isOut ? `<span class="badge badge-tag" style="top:34px;">${escapeHtml(tag)}</span>` : ""}
         ${isOut ? `<span class="badge badge-out">Sold out</span>` : ""}
         <button class="wish-toggle ${isWished ? "active" : ""}" type="button" aria-label="Save to wishlist">
           <svg viewBox="0 0 24 24" fill="${isWished ? "currentColor" : "none"}" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7.5-4.6-10-9.2C.4 8.4 2 4.5 5.8 4a5 5 0 0 1 6.2 3 5 5 0 0 1 6.2-3c3.8.5 5.4 4.4 3.8 7.8C19.5 16.4 12 21 12 21Z"/></svg>
@@ -267,6 +295,7 @@ function productCardHtml(p) {
       <div class="product-body">
         <span class="product-cat">${escapeHtml(p.category || "")}</span>
         <span class="product-name">${escapeHtml(p.name || "")}</span>
+        ${ratingHtml}
         <span class="product-desc">${escapeHtml(p.description || "")}</span>
         <div class="price-row">
           <span class="price">${money(p.price || 0)}</span>
@@ -442,7 +471,10 @@ function renderProductDetail() {
   discountBadge.hidden = !discountPct;
   if (discountPct) discountBadge.textContent = `-${discountPct}%`;
 
-  document.getElementById("detailNewBadge").hidden = !(p.isNew && !isOut);
+  const tag = tagLabel(p);
+  const tagBadge = document.getElementById("detailNewBadge");
+  tagBadge.hidden = !(tag && !isOut);
+  if (tag) tagBadge.textContent = tag;
 
   const wishBtn = document.getElementById("detailWishBtn");
   wishBtn.classList.toggle("active", isWished);
@@ -460,6 +492,14 @@ function renderProductDetail() {
 
   document.getElementById("detailCategory").textContent = p.category || "";
   document.getElementById("detailName").textContent = p.name || "";
+
+  const rating = Number(p.rating) || 0;
+  const ratingRow = document.getElementById("detailRatingRow");
+  ratingRow.hidden = rating <= 0;
+  if (rating > 0) {
+    ratingRow.innerHTML = `<span class="rating-stars">${starString(rating)}</span><span>${rating.toFixed(1)}${p.reviewCount ? ` (${p.reviewCount} reviews)` : ""}</span>`;
+  }
+
   document.getElementById("detailPriceRow").innerHTML = `
     <span class="price">${money(p.price || 0)}</span>
     ${p.oldPrice ? `<span class="old-price">${money(p.oldPrice)}</span>` : ""}
@@ -813,6 +853,14 @@ function bindGlobalEvents() {
   document.getElementById("lightboxNext").addEventListener("click", () => lightboxStep(1));
   document.getElementById("lightboxModal").addEventListener("click", (e) => {
     if (e.target.id === "lightboxModal") closeLightbox();
+  });
+
+  document.getElementById("viewAllBtn").addEventListener("click", (e) => {
+    e.preventDefault();
+    activeCategory = "all";
+    document.querySelectorAll(".cat-tile").forEach(b => b.classList.remove("active"));
+    renderProducts();
+    document.getElementById("shop").scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   bindDetailEvents();
