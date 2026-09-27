@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 140">
+  <g transform="translate(14,18)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="52" cy="52" r="50" stroke="#B08D57" stroke-width="1.4" opacity="0.55"/>
+    <path d="M28 64 L52 34 L76 64" stroke="#B08D57" stroke-width="3"/>
+    <path d="M38 64 L38 80 L66 80 L66 64" stroke="#261F17" stroke-width="3"/>
+  </g>
+  <text x="140" y="70" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-weight="500" font-size="44" fill="#261F17">Grihokona</text>
+  <line x1="141" y1="86" x2="330" y2="86" stroke="#B08D57" stroke-width="1"/>
+  <text x="141" y="112" font-family="'Noto Sans Bengali','Kalpurush','Hind Siliguri',sans-serif" font-size="24" fill="#8A7C6C">গৃহকোণ</text>
+</svg>
