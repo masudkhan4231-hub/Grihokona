@@ -16,6 +16,7 @@ auth.onAuthStateChanged((user) => {
   if (user) {
     subscribeToProducts();
     loadBranding();
+    loadPromos();
   }
 });
 
@@ -386,5 +387,112 @@ document.getElementById("saveBrandingBtn").addEventListener("click", async () =>
   } finally {
     btn.disabled = false;
     btn.textContent = "Save branding";
+  }
+});
+
+
+/* =========================================================
+   Promo banners (3 tiles on the homepage)
+   Stored in Firestore doc: settings/promos  ->  { tiles: [...] }
+   ========================================================= */
+let promoState = [
+  { title: "Up to 50% Off", subtitle: "On selected home decor items", buttonText: "Shop Now", imageUrl: null },
+  { title: "Cozy Bedding", subtitle: "Soft • Comfortable • Premium", buttonText: "Shop Bedding", imageUrl: null },
+  { title: "Modern Kitchen Essentials", subtitle: "Cook • Serve • Enjoy", buttonText: "Shop Kitchen", imageUrl: null }
+];
+let promoFiles = [null, null, null];
+
+function loadPromos() {
+  db.collection("settings").doc("promos").get().then((doc) => {
+    if (doc.exists && Array.isArray(doc.data().tiles)) {
+      doc.data().tiles.slice(0, 3).forEach((t, i) => {
+        promoState[i] = Object.assign({}, promoState[i], t);
+      });
+    }
+    renderPromoEditor();
+  }).catch(() => renderPromoEditor());
+}
+
+function renderPromoEditor() {
+  const box = document.getElementById("promoEditor");
+  box.innerHTML = promoState.map((_, i) => `
+    <div class="promo-edit-block" data-i="${i}">
+      <span class="field-label">Banner ${i + 1}</span>
+      <input type="text" class="pe-title" placeholder="Title">
+      <input type="text" class="pe-sub" placeholder="Short line under the title">
+      <input type="text" class="pe-btn" placeholder="Button text">
+      <div class="image-drop branding-drop pe-drop"><p>Tap to choose a background photo (optional)</p></div>
+      <input type="file" class="pe-file" accept="image/*" hidden>
+      <div class="image-preview-row pe-preview"></div>
+    </div>
+  `).join("");
+
+  box.querySelectorAll(".promo-edit-block").forEach((block) => {
+    const i = Number(block.dataset.i);
+    const title = block.querySelector(".pe-title");
+    const sub = block.querySelector(".pe-sub");
+    const btn = block.querySelector(".pe-btn");
+    const drop = block.querySelector(".pe-drop");
+    const file = block.querySelector(".pe-file");
+
+    title.value = promoState[i].title || "";
+    sub.value = promoState[i].subtitle || "";
+    btn.value = promoState[i].buttonText || "";
+
+    title.addEventListener("input", () => { promoState[i].title = title.value; });
+    sub.addEventListener("input", () => { promoState[i].subtitle = sub.value; });
+    btn.addEventListener("input", () => { promoState[i].buttonText = btn.value; });
+
+    drop.addEventListener("click", () => file.click());
+    file.addEventListener("change", (e) => {
+      if (e.target.files[0]) { promoFiles[i] = e.target.files[0]; renderPromoPreview(block, i); }
+      e.target.value = "";
+    });
+
+    renderPromoPreview(block, i);
+  });
+}
+
+function renderPromoPreview(block, i) {
+  const row = block.querySelector(".pe-preview");
+  const src = promoFiles[i] ? URL.createObjectURL(promoFiles[i]) : promoState[i].imageUrl;
+  if (!src) { row.innerHTML = ""; return; }
+  row.innerHTML = `<div class="image-preview"><img src="${src}" alt=""><button type="button" aria-label="Remove image">✕</button></div>`;
+  row.querySelector("button").addEventListener("click", () => {
+    promoFiles[i] = null;
+    promoState[i].imageUrl = null;
+    renderPromoPreview(block, i);
+  });
+}
+
+document.getElementById("savePromosBtn").addEventListener("click", async () => {
+  const btn = document.getElementById("savePromosBtn");
+  const errorEl = document.getElementById("promoError");
+  errorEl.hidden = true;
+  btn.disabled = true;
+  btn.textContent = "Saving…";
+
+  try {
+    for (let i = 0; i < promoState.length; i++) {
+      if (promoFiles[i]) {
+        promoState[i].imageUrl = await uploadToCloudinary(promoFiles[i]);
+      }
+    }
+    const tiles = promoState.map((t) => ({
+      title: (t.title || "").trim(),
+      subtitle: (t.subtitle || "").trim(),
+      buttonText: (t.buttonText || "").trim(),
+      imageUrl: t.imageUrl || null
+    }));
+    await db.collection("settings").doc("promos").set({ tiles });
+    promoFiles = [null, null, null];
+    document.querySelectorAll(".promo-edit-block").forEach((block, i) => renderPromoPreview(block, i));
+    showAdminToast("Banners updated");
+  } catch (err) {
+    errorEl.textContent = "Couldn't save: " + err.message;
+    errorEl.hidden = false;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Save banners";
   }
 });

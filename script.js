@@ -58,7 +58,28 @@ document.addEventListener("DOMContentLoaded", () => {
   renderWishlist();
   subscribeToProducts();
   subscribeToBranding();
+  subscribeToPromos();
 });
+
+/* ---------- Live promo banner tiles from Firestore ---------- */
+function subscribeToPromos() {
+  db.collection("settings").doc("promos").onSnapshot((doc) => {
+    if (!doc.exists) return;
+    const tiles = doc.data().tiles;
+    if (!Array.isArray(tiles) || tiles.length === 0) return;
+
+    document.getElementById("promoGrid").innerHTML = tiles.slice(0, 3).map((t, i) => {
+      const hasImg = !!t.imageUrl;
+      const bg = hasImg ? ` style="background-image:url('${encodeURI(t.imageUrl).replace(/'/g, "%27")}')"` : "";
+      return `
+        <div class="promo-tile promo-${i + 1} ${hasImg ? "has-img" : ""}"${bg}>
+          <h3>${escapeHtml(t.title || "")}</h3>
+          ${t.subtitle ? `<p>${escapeHtml(t.subtitle)}</p>` : ""}
+          ${t.buttonText ? `<a href="#shop" class="btn btn-sm">${escapeHtml(t.buttonText)} →</a>` : ""}
+        </div>`;
+    }).join("");
+  });
+}
 
 /* ---------- Live branding (logo + hero photo) from Firestore ---------- */
 function subscribeToBranding() {

@@ -104,3 +104,14 @@
 @media (min-width:640px){
   .branding-row{ flex-direction:row; }
 }
+
+/* ---------- Promo banner editor ---------- */
+.promo-edit-block{
+  border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; margin-bottom:12px;
+  display:flex; flex-direction:column; gap:8px;
+}
+.promo-edit-block input[type="text"]{
+  border:1px solid var(--border); border-radius:8px; padding:9px 10px; background:var(--bg); font-size:0.9rem;
+}
+.promo-edit-block input[type="text"]:focus{ outline:none; border-color:var(--primary); background:#fff; }
+#savePromosBtn{ margin-top:6px; }
