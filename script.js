@@ -65,13 +65,19 @@ function subscribeToBranding() {
   db.collection("settings").doc("site").onSnapshot((doc) => {
     if (!doc.exists) return;
     const data = doc.data();
+
     if (data.logoUrl) {
       const logoImg = document.getElementById("brandLogoImg");
-      logoImg.src = data.logoUrl;
       logoImg.style.display = "";
+      logoImg.src = data.logoUrl;
+      document.getElementById("brandNameText").style.display = "none";
     }
+
     if (data.heroUrl) {
-      document.getElementById("heroImg").src = data.heroUrl;
+      const heroImg = document.getElementById("heroImg");
+      const wrap = document.getElementById("heroMediaBg");
+      heroImg.onload = () => wrap.classList.remove("img-fallback");
+      heroImg.src = data.heroUrl;
     }
   });
 }

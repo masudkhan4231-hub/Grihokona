@@ -44,8 +44,8 @@ src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"
 <header class="site-header">
   <div class="container header-inner">
     <a href="#home" class="brand">
-      <img src="images/logo.svg" alt="Grihokona" class="brand-logo" id="brandLogoImg" onerror="this.style.display='none'">
-      <span class="brand-name">Grihokona</span>
+      <img src="images/logo.svg" alt="Grihokona" class="brand-logo" id="brandLogoImg" onerror="this.style.display='none'; document.getElementById('brandNameText').style.display='inline';">
+      <span class="brand-name" id="brandNameText" style="display:none;">Grihokona</span>
     </a>
     <nav class="main-nav">
       <a href="#shop">Shop</a>
@@ -73,19 +73,18 @@ src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"
   <section class="hero" id="home">
     <div class="hero-media-bg" id="heroMediaBg">
       <img src="images/hero.svg" alt="Grihokona home and lifestyle products" id="heroImg" onerror="this.parentElement.classList.add('img-fallback')">
-      <div class="hero-overlay">
-        <div class="container">
-          <div class="hero-copy">
-            <p class="hero-kicker">Make your home more beautiful</p>
-            <h1>Home & Lifestyle Products</h1>
-            <p class="hero-sub">Grihokona brings you home and lifestyle essentials — sourced for quality, priced fairly, delivered across Bangladesh.</p>
-            <div class="hero-bullets">
-              <span>Better Living</span><span>Stylish Spaces</span><span>Everyday Essentials</span>
-            </div>
-            <div class="hero-actions">
-              <a href="#shop" class="btn btn-primary">Shop Now</a>
-              <a href="https://wa.me/8801903770516" target="_blank" rel="noopener" class="btn btn-ghost whatsapp-link">Message us on WhatsApp</a>
-            </div>
+      <div class="hero-shade"></div>
+      <div class="container hero-content">
+        <div class="hero-copy">
+          <p class="hero-kicker">Make your home more beautiful</p>
+          <h1>Home & Lifestyle Products</h1>
+          <p class="hero-sub">Grihokona brings you home and lifestyle essentials — sourced for quality, priced fairly, delivered across Bangladesh.</p>
+          <div class="hero-bullets">
+            <span>Better Living</span><span>Stylish Spaces</span><span>Everyday Essentials</span>
+          </div>
+          <div class="hero-actions">
+            <a href="#shop" class="btn btn-primary">Shop Now</a>
+            <a href="https://wa.me/8801903770516" target="_blank" rel="noopener" class="btn btn-ghost whatsapp-link">Message us on WhatsApp</a>
           </div>
         </div>
       </div>
